@@ -38,6 +38,8 @@ function App() {
         onChange={(event, editor) => {
           const data = editor.getData()
           console.log({ event, editor, data })
+          let params = localStorage.getItem('param')
+          console.log('param: ', params)
         }}
       />
     </div>
