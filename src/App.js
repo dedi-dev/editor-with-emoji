@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react'
-import Editor from 'ckeditor5-custom-build/build/ckeditor'
-import { CKEditor } from '@ckeditor/ckeditor5-react'
 import EmojiPicker from 'emoji-picker-react'
 import ReactQuill from 'react-quill'
 import { Twemoji   } from 'react-emoji-render';
 import emoji from 'react-easy-emoji'
 import emojiRegex  from 'emoji-regex'
+import Graphemer from 'graphemer';
 import 'react-quill/dist/quill.snow.css'
+import './App.css'
 
 function App() {
+  const splitter = new Graphemer();
   const regex = emojiRegex();
   const testValue =
-    '🥲 tess 🙇‍♂️💁‍♀️💁‍♂️ lagi 👩‍❤️‍💋‍👨'
+    '🥲 tess'
 
   const [data, setData] = useState('Hello from CKEditor 5!')
   const [value, setValue] = useState('')
@@ -20,13 +21,34 @@ function App() {
   const loopEmoji = () => {
     
     console.log('test Emoji: ', '🥲'.match(regex))
-    let emojis = []
-    for (const match of testValue.matchAll(regex)) {
-      const emoji = match[0];
-      console.log(`Matched sequence ${ emoji } — code points: ${ [...emoji].length }`);
-      emojis.push(`Matched sequence ${ emoji } — code points: ${ [...emoji].length }`)
-    }
-    setListData(emojis)
+    // let element = []
+    // for (const match of testValue.matchAll(regex)) {
+    //   const emoji = match[0];
+    //   console.log(`Matched sequence ${ emoji } — code points: ${ [...emoji].length }`);
+    //   emojis.push(`Matched sequence ${ emoji } — code points: ${ [...emoji].length }`)
+    // }
+    // for (let i = 0; i < testValue.length; i++) {
+    //   console.log(`testValue ke ${i}: ${testValue[i]}`)
+    //   let char = testValue[i]
+    //   if (char.match(regex)) {
+    //     if (i > 0) {
+    //       if (testValue[i - 1].match(regex)) {
+    //        const newChar = testValue[i - 1] + char
+    //        testValue[i - 1] = newChar
+    //       } else {
+    //         element.push(char)
+    //       }
+    //     }
+    //   } else {
+    //     element.push(char)
+    //   }
+      
+    // }
+    // setListData(element)
+    const graphemes = splitter.splitGraphemes(testValue);
+    setListData(graphemes)
+    console.log('tes1: ', '🥲'.match(regex).length )
+    console.log('tes2: ', '2'.match(regex) )
   }
 
   // for (const match of testValue.matchAll(regex)) {
@@ -46,7 +68,10 @@ function App() {
       <p>
         {listData.map((val, i) => (emoji(val)))}
       </p>
-
+      <p>
+        testing span and emoji \n
+        <span className='font-bold'>{emoji('🥲 tess')}</span>
+      </p>
       <textarea readOnly value={testValue} style={{ outline: 'none' }} />
       <Twemoji  svg size={32} text={`This ❤️ sentence includes :+1: a variety of emoji types :) ${testValue} `} />
       <h4>Emoji Easy</h4>
@@ -55,6 +80,7 @@ function App() {
       </p>
       <div>
         <ReactQuill
+          readOnly
           theme="snow"
           value={value}
           onChange={(value) => {
@@ -75,7 +101,9 @@ function App() {
       </div>
       <h2>Emoji Picker</h2>
       <EmojiPicker
-        lazyLoadEmojis={true}
+        height={300}
+        width={600}
+        searchDisabled
         emojiStyle="facebook"
         onEmojiClick={(emoji) => {
           console.log(emoji)
@@ -83,17 +111,6 @@ function App() {
           console.log(emoji.emoji)
           // const newData = data + emoji.emoji
           // setData(newData)
-        }}
-      />
-      <h2>Using CKEditor 5 build in React</h2>
-      <CKEditor
-        editor={Editor}
-        data={data}
-        onChange={(event, editor) => {
-          const data = editor.getData()
-          console.log({ event, editor, data })
-          let params = localStorage.getItem('param')
-          console.log('param: ', params)
         }}
       />
     </div>
